@@ -335,7 +335,11 @@ final class HttpTest extends TestCase
     {
         $test = Http::get_redirect_url('http://free.fr');
         $this->assertInternalType('string', $test);
-        $this->assertEquals('http://portail.free.fr/', $test);
+        // $this->assertEquals('http://portail.free.fr/', $test);
+        $this->assertArrayHasKey($test, [
+            'http://www.free.fr/freebox/index.html',
+            'http://portail.free.fr/'
+        ]);
     }
 
     /**
@@ -383,7 +387,11 @@ final class HttpTest extends TestCase
     {
         $test = Http::get_final_url('http://free.fr');
         $this->assertInternalType('string', $test);
-        $this->assertEquals('http://portail.free.fr/', $test);
+        // $this->assertEquals('http://portail.free.fr/', $test);
+        $this->assertArrayHasKey($test, [
+            'http://www.free.fr/freebox/index.html',
+            'http://portail.free.fr/'
+        ]);
     }
 
     /**
