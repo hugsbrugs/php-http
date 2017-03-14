@@ -33,26 +33,28 @@ final class HttpTest extends TestCase
     /* ************************************************* */
     /* ***************** Http::nslookup **************** */
     /* ************************************************* */
+    
+    // http://stackoverflow.com/questions/10158134/how-can-i-unit-test-a-php-class-method-that-executes-a-command-line-program
 
     /**
      *
      */
-    public function testCanNslookup()
+    /*public function testCanNslookup()
     {
         $test = Http::nslookup('www.free.fr');
         $this->assertInternalType('string', $test);
         $this->assertEquals('212.27.48.10', $test);
-    }
+    }*/
 
     /**
      *
      */
-    public function testCannotNslookup()
+    /*public function testCannotNslookup()
     {
         $test = Http::nslookup('http://www.free.fr');
         $this->assertInternalType('null', $test);
         $this->assertNull($test);
-    }
+    }*/
 
     /* ************************************************* */
     /* ************* Http::is_url_accessible *********** */

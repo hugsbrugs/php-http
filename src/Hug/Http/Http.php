@@ -25,7 +25,7 @@ class Http
     public static function nslookup($url)
     {
         $ip = null;
-        $ret =  shell_exec('nslookup '.$url);
+        $ret = shell_exec('nslookup '.$url);
         $ret = explode("\n", $ret);
         $ret = array_reverse($ret);
         foreach ($ret as $r)

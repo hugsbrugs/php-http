@@ -1,15 +1,15 @@
 language: php
-
 php:
- - 7
-
+- 7
 before_script:
- - wget http://getcomposer.org/composer.phar
- - php composer.phar install --no-interaction
-
+- wget http://getcomposer.org/composer.phar
+- php composer.phar install --no-interaction
 script:
- - mkdir -p build/logs
- - phpunit --coverage-clover build/logs/clover.xml
-
+- mkdir -p build/logs
+- phpunit --coverage-clover build/logs/clover.xml
 after_success:
- - travis_retry php vendor/bin/coveralls -v
+- travis_retry php vendor/bin/coveralls -v
+- if  [ $TRAVIS_PHP_VERSION = '7' ] && [ $TRAVIS_BRANCH = 'master' ] && [ $TRAVIS_PULL_REQUEST = 'false' ]; then sh generate-api.sh; fi
+env:
+  global:
+    secure: BFp/QmvXS456v62TA5JG98BIsFGfRoOlZAKqDU4zmmacg/SsTJWbGPi7bKSWldHtfxCsiBnU+CqxN1HthukgEmYnhC1Lyd5j5H9Q/m/TL7S5Hfs+H16YCWG36xzdjBrlFGQgUCF/sdbTqkNY6nnmOzWqdstLbasdMLSeXVrzvjDAVcZkIsep25yA5qOPF92IoqR8cXxXo/SYIZ5EyoOBa74QMv/Crc8pSbDYwR7VDY+tRwPKcWJB9fBXVHfxv+f9X1Rx/lpbyk5cY8EBTR0j8KZYcAHQ+20IwjbL+jE6jbXjakXoAV1llR3mIUblBUQYklFBuxEHCZFGreqHO5Mz/g8SFejHZVXPAPAgVPDaMlKoNkNVoYG8hU8dnkx9QOC73FOekDneasSrl0GLsM/rkj5MgCfxQoqGcerBNcg5WfMdrDN73yxEozltjCavgSP478LhcjLPHMn8ZF0pnDoUwwvYgm/9/51CCrOowLIll90agXMDemcE966F2ig/8K0hIMGRiMbWeFH/pKjxV5M7hu8JHDk0G9VRGndGnCaA6ibBSpPTotecOOv8ZE1W0wxXFOSVvMEwtgho/CHl99I5xGSiR16dwhOpjIcXtWnO2RFqpyAzV9CC11vN7Mp4O345qFkfP29mKX9t/hm14jQfCToIdxH6ldA2a/LNuyict20=
