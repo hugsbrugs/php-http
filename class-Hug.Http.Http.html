@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class Hug\Http\Http</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">Overview</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="namespace-Hug.Http.html" title="Summary of Hug\Http"><span>Namespace</span></a>
+					</li>
+					<li class="active">
+<span>Class</span>					</li>
+
+
+
+
+
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li class="active">
+						<a href="namespace-Hug.html">
+							Hug<span></span>
+						</a>
+							<ul>
+					<li class="active">
+						<a href="namespace-Hug.Http.html">
+							Http						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-Hug.Http.Http.html">Http</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<div id="content" class="class">
+	<h1>Class Http</h1>
+
+
+
+
+
+
+
+
+
+
+
+	<div class="alert alert-info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-Hug.html">Hug</a>\<a href="namespace-Hug.Http.html">Http</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-Hug.Http.Http.html#7-516" title="Go to source code">Hug/Http/Http.php</a>
+		<br>
+	</div>
+
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading"><h2>Methods summary</h2></div>
+			<table class="summary table table-bordered table-striped methods" id="methods">
+		<tr data-order="nslookup" id="_nslookup">
+
+			<td class="attributes"><code>
+				 public static
+				string|null
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_nslookup">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#12-36" title="Go to source code">nslookup</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Execute shell nslookup command</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Execute shell nslookup command</p>
+
+<p>This function is used to accelerate Domain Name Availability : if a domain name responds to nslookup command then it's not available for purchase !</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string|null<br>Url corresponding IP address or null
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="is_url_accessible" id="_is_url_accessible">
+
+			<td class="attributes"><code>
+				 public static
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_is_url_accessible">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#38-63" title="Go to source code">is_url_accessible</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Check if an url is accessible (means not a 404)</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Check if an url is accessible (means not a 404)</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>is_url_accessible
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_http_code" id="_get_http_code">
+
+			<td class="attributes"><code>
+				 public static
+				integer
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_http_code">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#65-81" title="Go to source code">get_http_code</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Returns HTTP code for given URL</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Returns HTTP code for given URL</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd>$utl</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						integer<br>HTTP code
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="url_remove_query" id="_url_remove_query">
+
+			<td class="attributes"><code>
+				 public static
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_url_remove_query">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#84-103" title="Go to source code">url_remove_query</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Cleans an url from its query parameters</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Cleans an url from its query parameters</p>
+
+<p>Example :
+input : http://www.monsite.fr/fr/coucou/index.php?id=3&amp;num=50
+output : http://www.monsite.fr/fr/coucou/index.php</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>$clean_url
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="url_remove_query_and_path" id="_url_remove_query_and_path">
+
+			<td class="attributes"><code>
+				 public static
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_url_remove_query_and_path">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#105-125" title="Go to source code">url_remove_query_and_path</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Cleans an url from its query parameters and path</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Cleans an url from its query parameters and path</p>
+
+<p>Example :
+input : http://www.monsite.fr/fr/coucou/index.php?id=3&amp;num=50
+output : http://www.monsite.fr</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>$clean_url
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="grab_image" id="_grab_image">
+
+			<td class="attributes"><code>
+				 public static
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_grab_image">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#127-183" title="Go to source code">grab_image</a>( <span>string <var>$url</var></span>, <span>string <var>$save_to</var></span> )</code>
+
+			<div class="description short">
+				<p>Quick and dirty function to save an image (or any binary data transfered by url) from the internet</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Quick and dirty function to save an image (or any binary data transfered by url) from the internet</p>
+
+<p>http://stackoverflow.com/questions/6476212/save-image-from-url-with-curl-php</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+						<dt><var>$save_to</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_default_headers" id="_get_default_headers">
+
+			<td class="attributes"><code>
+				 public static
+				array
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_default_headers">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#185-209" title="Go to source code">get_default_headers</a>( <span>strnig <var>$host</var></span> )</code>
+
+			<div class="description short">
+				<p>Returns basic HTTP headers for a CURL request</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Returns basic HTTP headers for a CURL request</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$host</var></dt>
+						<dd>(ex: www.google.fr)</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						array<br>$headers (Connection, Accept, Accept-Charset, Keep-Alive, Accept-Language, Host)
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="extract_tld_from_url" id="_extract_tld_from_url">
+
+			<td class="attributes"><code>
+				 public static
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_extract_tld_from_url">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#214-232" title="Go to source code">extract_tld_from_url</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Extracts a TLD (Top Level Domain) from an URL</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Extracts a TLD (Top Level Domain) from an URL</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>$tld
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="extract_domain_from_url" id="_extract_domain_from_url">
+
+			<td class="attributes"><code>
+				 public static
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_extract_domain_from_url">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#234-257" title="Go to source code">extract_domain_from_url</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>In PHP : http://w-shadow.com/blog/2012/08/28/tldextract/
+In nodejs : https://github.com/oncletom/tld.js</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>In PHP : http://w-shadow.com/blog/2012/08/28/tldextract/
+In nodejs : https://github.com/oncletom/tld.js</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>$domain
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="extract_subdomain_from_url" id="_extract_subdomain_from_url">
+
+			<td class="attributes"><code>
+				 public static
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_extract_subdomain_from_url">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#259-276" title="Go to source code">extract_subdomain_from_url</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Extracts a sub-domain from an URL</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Extracts a sub-domain from an URL</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>$tld
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="extract_request_headers_body" id="_extract_request_headers_body">
+
+			<td class="attributes"><code>
+				 public static
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_extract_request_headers_body">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#278-328" title="Go to source code">extract_request_headers_body</a>( <span> <var>$html_with_headers</var></span> )</code>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+
+
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="header_status" id="_header_status">
+
+			<td class="attributes"><code>
+				 public static
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_header_status">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#331-420" title="Go to source code">header_status</a>( <span>integer <var>$statusCode</var></span> )</code>
+
+			<div class="description short">
+				<p>Sets a php script desired status code (usefull for API)</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Sets a php script desired status code (usefull for API)</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$statusCode</var></dt>
+						<dd>$status_code</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>$response Has header status been set or not
+					</div>
+
+
+					<h4>Link</h4>
+					<div class="list">
+							<a href="http://stackoverflow.com/questions/4162223/how-to-send-500-internal-server-error-error-from-a-php-script">http://stackoverflow.com/questions/4162223/how-to-send-500-internal-server-error-error-from-a-php-script</a><br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_redirect_url" id="_get_redirect_url">
+
+			<td class="attributes"><code>
+				 public static
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_redirect_url">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#423-471" title="Go to source code">get_redirect_url</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>Gets the address that the provided URL redirects to,
+or false if there's no redirect.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Gets the address that the provided URL redirects to,
+or false if there's no redirect.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+					<h4>Link</h4>
+					<div class="list">
+							<a href="http://stackoverflow.com/questions/3799134/how-to-get-final-url-after-following-http-redirections-in-pure-php">http://stackoverflow.com/questions/3799134/how-to-get-final-url-after-following-http-redirections-in-pure-php</a><br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_all_redirects" id="_get_all_redirects">
+
+			<td class="attributes"><code>
+				 public static
+				array
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_all_redirects">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#473-493" title="Go to source code">get_all_redirects</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>get_all_redirects()
+Follows and collects all redirects, in order, for the given URL.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>get_all_redirects()
+Follows and collects all redirects, in order, for the given URL.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						array
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_final_url" id="_get_final_url">
+
+			<td class="attributes"><code>
+				 public static
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_final_url">#</a>
+			<code><a href="source-class-Hug.Http.Http.html#495-514" title="Go to source code">get_final_url</a>( <span>string <var>$url</var></span> )</code>
+
+			<div class="description short">
+				<p>get_final_url()
+Gets the address that the URL ultimately leads to.
+Returns $url itself if it isn't a redirect.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>get_final_url()
+Gets the address that the URL ultimately leads to.
+Returns $url itself if it isn't a redirect.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$url</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+			</table>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+	</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
