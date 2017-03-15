@@ -1,6 +1,6 @@
 # php-http
 
-This library provides PHP utilities functions to manage URLs
+This library provides PHP utilities functions to manage URLs. Read [PHP DOC](https://hugsbrugs.github.io/php-http)
 
 [![Build Status](https://travis-ci.org/hugsbrugs/php-http.svg?branch=master)](https://travis-ci.org/hugsbrugs/php-http)
 [![Coverage Status](https://coveralls.io/repos/github/hugsbrugs/php-http/badge.svg?branch=master)](https://coveralls.io/github/hugsbrugs/php-http?branch=master)
@@ -100,3 +100,7 @@ Http::get_final_url($url);
 ```
 composer exec phpunit
 ```
+
+## Author
+
+Hugo Maugey [visit my website ;)](https://hugo.maugey.fr)

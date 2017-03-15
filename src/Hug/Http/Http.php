@@ -2,9 +2,6 @@
 
 namespace Hug\Http;
 
-# need tldextract
-require_once __DIR__ . '/../../../vendor/autoload.php';
-// require_once __DIR__ . '/../../../lib/tldextractphp/tldextract.php';
 use LayerShifter\TLDExtract\Extract;
 
 /**
