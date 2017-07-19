@@ -404,5 +404,105 @@ final class HttpTest extends TestCase
         $this->assertEquals('http://www.fraa.fr', $test);
     }
 
+    /* ************************************************* */
+    /* ************ Http::check_txt_record ************* */
+    /* ************************************************* */
+
+    /**
+     *
+     */
+    public function testCanCheckTxtRecord()
+    {
+        $test = Http::check_txt_record('https://hugo.maugey.fr', 'maugey.fr.');
+        $this->assertInternalType('boolean', $test);
+        // $this->assertTrue($test);
+    }
+
+    /**
+     *
+     */
+    public function testCannotCheckTxtRecord()
+    {
+        $test = Http::check_txt_record('https://hugo.maugey.fr', 'CACA');
+        $this->assertInternalType('boolean', $test);
+        // $this->assertFalse($test);
+    }
+    
+    /* ************************************************* */
+    /* ************** Http::wait_for_zone_ok *********** */
+    /* ************************************************* */
+
+    /**
+     *
+     */
+    /*public function testCanWaitForZoneOk()
+    {
+        $test = Http::wait_for_zone_ok($domain, $ip, $txt_record, $wait_minutes = 15);
+        $this->assertInternalType('boolean', $test);
+        $this->assertTrue($test);
+    }*/
+    
+    /**
+     *
+     */
+    /*public function testCannotWaitForZoneOk()
+    {
+        $test = Http::wait_for_zone_ok($domain, $ip, $txt_record, $wait_minutes = 15);
+        $this->assertInternalType('boolean', $test);
+        $this->assertTrue($test);
+    }*/
+    
+    /* ************************************************* */
+    /* **************** Http::is_zone_ok *************** */
+    /* ************************************************* */
+
+    /**
+     *
+     */
+    /*public function testCanTestZone()
+    {
+        $test = Http::is_zone_ok($domain, $ip, $txt_record);
+        $this->assertInternalType('boolean', $test);
+        $this->assertTrue($test);
+    }*/
+    
+    /**
+     *
+     */
+    /*public function testCannotTestZone()
+    {
+        $test = Http::is_zone_ok($domain, $ip, $txt_record);
+        $this->assertInternalType('boolean', $test);
+        $this->assertTrue($test);
+    }*/
+
+    /* ************************************************* */
+    /* ************** Http::get_name_servers *********** */
+    /* ************************************************* */
+
+    /**
+     *
+     */
+    public function testCanGetNameServers()
+    {
+        $test = Http::get_name_servers('maugey.fr');
+        $this->assertInternalType('array', $test);
+        // $this->assertTrue($test);
+    }
+    
+    /* ************************************************* */
+    /* ************ Http::add_escaped_fragment ********* */
+    /* ************************************************* */
+
+    /**
+     *
+     */
+    public function testCanAddEscapedFragment()
+    {
+        $test = Http::add_escaped_fragment('https://www.free.fr/coucou/titre.php.encore=tata');
+        $this->assertInternalType('string', $test);
+        // $this->assertTrue($test);
+    }
+
 }
 

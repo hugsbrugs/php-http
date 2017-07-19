@@ -127,7 +127,9 @@ class Http
     /**
      * Quick and dirty function to save an image (or any binary data transfered by url) from the internet
      *
-     * http://stackoverflow.com/questions/6476212/save-image-from-url-with-curl-php
+     * @link http://stackoverflow.com/questions/6476212/save-image-from-url-with-curl-php
+     *
+     * @link http://stackoverflow.com/questions/724391/saving-image-from-php-url
      *
      * @param string $url
      * @param string $save_to
@@ -276,57 +278,211 @@ class Http
     }
 
     /**
+     * Separates Headers from Body in CURL response
      *
+     * @param string $html_with_headers
+     * @return array 
+     *
+     * @link http://stackoverflow.com/questions/9183178/php-curl-retrieving-response-headers-and-body-in-a-single-request
+     *
+     * @todo test with proxy request
      */
     public static function extract_request_headers_body($html_with_headers)
     {
-        # METHODE 1
-        //list($header, $body) = explode("\r\n\r\n", $html_with_headers, 2);
-        
-        # METHODE 2 : http://stackoverflow.com/questions/9183178/php-curl-retrieving-response-headers-and-body-in-a-single-request
-        /*$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        error_log("header_size : ".$header_size);
-        $header = substr($response, 0, $header_size);
-        saveIntoFile("header1.txt", "/home/backrub.fr/public_html/php", "", $header);
-        $body = substr($html_with_headers, $header_size);*/
+        // $parts = explode("\r\n\r\nHTTP/", $html_with_headers);
+        $parts = explode("\n\nHTTP/", $html_with_headers);
 
-        # METHODE 3 : http://stackoverflow.com/questions/11359276/php-curl-exec-returns-both-http-1-1-100-continue-and-http-1-1-200-ok-separated-b
-        // $header = array();
-        // $body = array();
-        // foreach(explode("\r\n\r\n", $html_with_headers) as $frag)
-        // {
-        //     if(preg_match('/^HTTP\/[0-9\.]+ [0-9]+/', $frag))
-        //     {
-        //        $header[] = $frag;
-        //     }
-        //     else
-        //     {
-        //         $body[] = $frag;
-        //     }
-        // }
-        // $header = implode("\r\n", $header);
-        // $body = implode($body);
-        // $Response = array("HEADER" => http_parse_headers($header), "BODY" => $body);
-        // return $Response;
+        $headers_count = substr_count($html_with_headers, "\n\nHTTP/");
+        $headers_count +=1;
+        // error_log('headers_count : ' . $headers_count);
 
-        # METHODE 4 : http://stackoverflow.com/questions/9183178/php-curl-retrieving-response-headers-and-body-in-a-single-request
-        $parts = explode("\r\n\r\nHTTP/", $html_with_headers);
-        if(count($parts) > 1)
+        $pos = strpos($html_with_headers, "\n\nHTTP/");
+        $pos2 = strpos($html_with_headers, "\n\n", $pos+1);
+        error_log('pos end last header : ' . $pos2);
+
+        $headers = substr($html_with_headers, 0, $pos2);
+        $body = substr($html_with_headers, $pos2);
+        // error_log('headers : ' . $headers);
+        // error_log('body : ' . $body);
+
+        if($headers_count>1)
         {
-            $first_headers = $parts[0];
-            $last_parts = array_pop($parts);
-            $parts = implode("\r\n\r\n", [$first_headers, $last_parts]);
+            $heads = [];
+            $headers = explode("\n\n", $headers);
+            foreach ($headers as $key => $head)
+            {
+                $heads[] = Http::http_parse_headers($head);
+            }
         }
         else
         {
+            $heads = Http::http_parse_headers($headers);
+        }
+
+        $response = [
+            "headers" => $heads, 
+            "body" => $body
+        ];
+
+
+        # Many headers (proxy, redirects)
+        /*if(count($parts) > 1)
+        {
+            error_log('many headers');
+            $first_headers = $parts[0];
+            $last_parts = array_pop($parts);
+            // $parts = implode("\r\n\r\n", [$first_headers, $last_parts]);
+            $parts = implode("\n\n", [$first_headers, $last_parts]);
+        }
+        else
+        {
+            # One Header
             $parts = $parts[0];
         }
         
-        list($headers, $body) = explode("\r\n\r\n", $parts, 2);
-        $Response = array("HEADER" => http_parse_headers($headers), "BODY" => $body);
-        return $Response;
+        # Separate HTML from Headers
+        // list($headers, $body) = explode("\r\n\r\n", $parts, 2);
+        list($headers, $body) = explode("\n\n", $parts, 2);
+
+        $response = [
+            "header" => Http::http_parse_headers($headers), 
+            "body" => $body
+        ];*/
+
+        return $response;
     }
 
+    
+    /*public static function http_parse_headers($header)
+    {
+         $retVal = array();
+         $fields = explode("\r\n", preg_replace('/\x0D\x0A[\x09\x20]+/', ' ', $header));
+         foreach( $fields as $field ) {
+             if( preg_match('/([^:]+): (.+)/m', $field, $match) ) {
+                 $match[1] = preg_replace('/(?<=^|[\x09\x20\x2D])./e', 'strtoupper("\0")', strtolower(trim($match[1])));
+                 if( isset($retVal[$match[1]]) ) {
+                     $retVal[$match[1]] = array($retVal[$match[1]], $match[2]);
+                 } else {
+                     $retVal[$match[1]] = trim($match[2]);
+                 }
+             }
+         }
+         return $retVal;
+    }*/
+
+    public static function http_parse_headers($raw_headers)
+    {
+        $headers = array();
+        $key = '';
+
+        foreach(explode("\n", $raw_headers) as $i => $h)
+        {
+            $h = explode(':', $h, 2);
+
+            if (isset($h[1]))
+            {
+                if (!isset($headers[$h[0]]))
+                {
+                    $headers[$h[0]] = trim($h[1]);
+                }
+                elseif (is_array($headers[$h[0]]))
+                {
+                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
+                }
+                else
+                {
+                    $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1])));
+                }
+
+                $key = $h[0];
+            }
+            else
+            { 
+                if (substr($h[0], 0, 1) == "\t")
+                {
+                    $headers[$key] .= "\r\n\t".trim($h[0]);
+                }
+                elseif (!$key) 
+                {
+                    $headers[0] = trim($h[0]); 
+                }
+            }
+        }
+
+        $status_codes = ['100','101','102','200','201','202','203','204','205','206','207','300','301','302','303','304','305','307','400','401','402','403','404','405','406','407','408','409','410','411','412','413','414','415','416','417','422','423','424','426','500','501','502','503','504','505','506','507','509','510'];
+        if(isset($headers[0]))
+        {
+            foreach ($status_codes as $key => $status_code)
+            {
+                // error_log($status_code);
+                if(strpos($headers[0], $status_code)>-1)
+                {
+                    $headers['Status'] = intval($status_code);
+                    break;
+                }
+            }
+        }
+
+        return $headers;
+    }
+
+    # METHODE 1
+    /*public static function extract_request_headers_body_1($html_with_headers)
+    {
+        list($header, $body) = explode("\r\n\r\n", $html_with_headers, 2);
+        
+        $response = [
+            "header" => $header, 
+            "body" => $body
+        ];
+
+        return $response;
+    }*/
+
+    # METHODE 2 : http://stackoverflow.com/questions/9183178/php-curl-retrieving-response-headers-and-body-in-a-single-request
+    /*public static function extract_request_headers_body_2($html_with_headers)
+    {        
+        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        // error_log("header_size : ".$header_size);
+        $header = substr($response, 0, $header_size);
+        $body = substr($html_with_headers, $header_size);
+
+        $response = [
+            "header" => $header, 
+            "body" => $body
+        ];
+
+        return $response;    
+    }*/
+
+    # METHODE 3 : http://stackoverflow.com/questions/11359276/php-curl-exec-returns-both-http-1-1-100-continue-and-http-1-1-200-ok-separated-b
+    /*public static function extract_request_headers_body_3($html_with_headers)
+    {
+        $header = [];
+        $body = [];
+
+        foreach(explode("\r\n\r\n", $html_with_headers) as $frag)
+        {
+            if(preg_match('/^HTTP\/[0-9\.]+ [0-9]+/', $frag))
+            {
+               $header[] = $frag;
+            }
+            else
+            {
+                $body[] = $frag;
+            }
+        }
+
+        $header = implode("\r\n", $header);
+        $body = implode($body);
+
+        $response = [
+            "header" => http_parse_headers($headers), 
+            "body" => $body
+        ];
+
+        return $response;
+    }*/
 
     /**
      * Sets a php script desired status code (usefull for API)
@@ -512,6 +668,209 @@ class Http
             return $url;
         }
     }
+
+    /**
+     * Check a TXT record in domain zone file
+     * 
+     * @param string $domain Domain to check TXT record
+     * @param string $txt value of TXT record to check for
+     *
+     * @return bool $exist 
+     */
+    public static function check_txt_record($domain, $txt)
+    {
+        $exist = false;
+        $res = dns_get_record($domain, DNS_TXT);
+        // error_log("check_txt_record : ".print_r($res, true));
+        if(isset($res[0]['txt']) && $res[0]['txt']==$txt)
+        {
+            $exist = true;
+        }
+        return $exist;
+    }
+
+    /**
+     * Waits and tests every minute if domain zone has correct IP adress and TXT record set
+     *
+     * @param string $domain
+     * @param string $ip
+     * @param string $txt_record
+     * @param int $wait_minutes
+     * @return bool $is_zone_ok
+     */
+    public static function wait_for_zone_ok($domain, $ip, $txt_record, $wait_minutes = 15)
+    {
+        $is_zone_ok = false;
+
+        $ping = false;
+        $loops = 0;
+        do{
+            if(Http::is_zone_ok($domain, $ip, $txt_record))
+            {
+                $is_zone_ok = true;
+                $ping = true;   
+            }
+            else
+            {
+                $loops++;
+                if($loops > $wait_minutes)
+                {
+                    $ping = true;       
+                }
+                else
+                {
+                    sleep(60);
+                }
+            }
+        } while(!$ping);
+
+        return $is_zone_ok;
+    }
+
+    /**
+     * Tests if domain zone has correct IP adress and TXT record set
+     *
+     * @param string $domain
+     * @param string $ip
+     * @param string $txt_record
+     * @return bool $is_zone_ok
+     * @todo Mark this function unix and dig command dependant. Look if PHP functions could be used instead (dns_get_record($domain))
+     */
+    public static function is_zone_ok($domain, $ip, $txt_record)
+    {
+        $is_zone_ok = false;
+
+        $is_txt_record_ok = false;
+        $res = shell_exec('dig -t txt +short ' . $domain);
+        $res = explode("\n", $res);
+        foreach ($res as $one_txt_record)
+        {
+            if(trim($one_txt_record, '"')===$txt_record)
+            {
+                $is_txt_record_ok = true;
+                break;
+            }
+
+        }
+        //error_log(print_r($res, true));
+
+        $is_a_record_ok = true;
+        $res = shell_exec('dig -t A +short ' . $domain);
+        $res = explode("\n", $res);
+        foreach ($res as $one_a_record)
+        {
+            if(trim($one_a_record, '"')===$ip)
+            {
+                $is_a_record_ok = true;
+                break;
+            }
+
+        }
+        //error_log(print_r($res, true));
+
+        if($is_txt_record_ok && $is_a_record_ok)
+        {
+            $is_zone_ok = true; 
+        }
+
+        return $is_zone_ok;
+    }
+
+    /**
+     * Get Name Servers of given domain
+     *
+     * @param string $domain (ex:eurovision.tv)
+     * @return array $name_servers
+     */
+    public static function get_name_servers($domain)
+    {
+        $name_servers = [];
+        $dnss = dns_get_record($domain, DNS_NS);
+        foreach ($dnss as $dns)
+        {
+            if(isset($dns['target']) && !empty($dns['target']))
+            {
+                $name_servers[] = $dns['target'];
+            }
+        }
+        return $name_servers;
+    }
+
+
+    /**
+     * Add espaced fragment to URL
+     *
+     * @param string $url
+     * @return string $url URL with escaped fragment
+     */
+    public static function add_escaped_fragment($url)
+    {
+        $parsed_url = parse_url($url);
+
+        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : ''; 
+        $host     = isset($parsed_url['host']) ? $parsed_url['host'] : ''; 
+        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : ''; 
+        $user     = isset($parsed_url['user']) ? $parsed_url['user'] : ''; 
+        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : ''; 
+        $pass     = ($user || $pass) ? "$pass@" : ''; 
+        $path     = isset($parsed_url['path']) ? $parsed_url['path'] : ''; 
+        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : ''; 
+        
+        # Add escaped fragment
+        if($query==='')
+            $escaped_fragment = '?_escaped_fragment_=';
+        else
+            $escaped_fragment = '&_escaped_fragment_=';
+
+        $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : ''; 
+        
+        return "$scheme$user$pass$host$port$path$query$escaped_fragment$fragment";
+
+    }
+
+
+    /**
+     *  An example CORS-compliant method.  It will allow any GET, POST, or OPTIONS requests from any origin.
+     *
+     *  In a production environment, you probably want to be more restrictive, but this gives you the general idea of what is involved.  For the nitty-gritty low-down, read:
+     *
+     * @link https://developer.mozilla.org/en/HTTP_access_control
+     * @link http://www.w3.org/TR/cors/
+     *
+     */
+    public static function cors()
+    {
+        # Allow from any origin
+        if (isset($_SERVER['HTTP_ORIGIN']))
+        {
+            # Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one you want to allow, and if so:
+            header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+            header('Access-Control-Allow-Credentials: true');
+            # cache for 1 day
+            //header('Access-Control-Max-Age: 86400');
+        }
+
+        # Access-Control headers are received during OPTIONS requests
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS')
+        {
+
+            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+            {
+                # may also be using PUT, PATCH, HEAD etc
+                header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, HEAD, DELETE, OPTIONS");
+            }
+
+            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+            {
+                header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+            }
+
+            exit(0);
+        }
+
+        // echo "You have CORS!";
+    }
+
 
 }
 

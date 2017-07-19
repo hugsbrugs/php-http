@@ -9,7 +9,6 @@
             "role": "Developer"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "layershifter/tld-extract": "^1.2"
     },
