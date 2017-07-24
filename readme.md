@@ -55,6 +55,11 @@ Returns basic HTTP headers for a CURL request
 Http::get_default_headers($host);
 ```
 
+Extracts extention from an URL
+```php
+Http::extract_extension_from_url($url);
+```
+
 Extracts a TLD (Top Level Domain) from an URL
 ```php
 Http::extract_tld_from_url($url);

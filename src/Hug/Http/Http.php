@@ -211,6 +211,25 @@ class Http
     }
 
 
+    /**
+     * Extracts a TLD (Top Level Domain) from an URL
+     *
+     * @param string $url
+     * @return string $tld 
+     */
+    public static function extract_extension_from_url($url)
+    {
+        $extension = '';
+        
+        $components = tld_extract($url);
+        if($components->suffix!=='')
+        {
+            $extension = $components->suffix;
+        }
+        
+
+        return $extension;
+    }
     
 
     /**

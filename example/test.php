@@ -4,6 +4,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Hug\Http\Http as Http;
 
+
+echo Http::extract_extension_from_url('duplicate-content.fr');
+exit;
+
 # Curl Request with headers (test with proxy)
 
 $filename = __DIR__ . '/free-headers.html';

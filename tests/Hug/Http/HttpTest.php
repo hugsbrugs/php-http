@@ -212,6 +212,31 @@ final class HttpTest extends TestCase
     }
 
     /* ************************************************* */
+    /* ******** Http::extract_extension_from_url ******* */
+    /* ************************************************* */
+
+    /**
+     *
+     */
+    public function testCanExtractExtensionFromUrl()
+    {
+        $test = Http::extract_extension_from_url('https://www.boom.co.uk/page1/sspage2?query=value#coucou');
+        $this->assertInternalType('string', $test);
+        $this->assertEquals('co.uk', $test);
+    }
+
+    /**
+     *
+     */
+    public function testCannotExtractExtensionFromUrl()
+    {
+        $test = Http::extract_extension_from_url('https://www.boom.couk/page1/sspage2?query=value#coucou');
+        $this->assertInternalType('string', $test);
+        // $this->assertEquals('boom.co.uk', $test);
+        // assertException()
+    }
+
+    /* ************************************************* */
     /* *********** Http::extract_tld_from_url ********** */
     /* ************************************************* */
 
