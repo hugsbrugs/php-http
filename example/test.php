@@ -4,8 +4,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Hug\Http\Http as Http;
 
+$test = Http::grab_image('https://naturo-paca.fr/img/martin_carre.jpg', __DIR__ . '/../data/martin_carre.jpg');
 
-echo Http::extract_extension_from_url('duplicate-content.fr');
 exit;
 
 # Curl Request with headers (test with proxy)

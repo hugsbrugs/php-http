@@ -1,7 +1,7 @@
 <?php
 
 # For PHP7
-// declare(strict_types=1);
+declare(strict_types=1);
 
 // namespace Hug\Tests\Http;
 
@@ -20,7 +20,7 @@ final class HttpTest extends TestCase
     public $url4 = null;
     public $url5 = null;
 
-    function __construct()
+    function setUp(): void
     {
         $this->url1 = 'http://www.free.fr';
         $this->url2 = 'http://www.lequipe.fr';
@@ -42,7 +42,7 @@ final class HttpTest extends TestCase
     /*public function testCanNslookup()
     {
         $test = Http::nslookup('www.free.fr');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('212.27.48.10', $test);
     }*/
 
@@ -66,7 +66,7 @@ final class HttpTest extends TestCase
     public function testCanAccessUrl()
     {
         $test = Http::is_url_accessible('www.free.fr');
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertTrue($test);
     }
 
@@ -76,7 +76,7 @@ final class HttpTest extends TestCase
     public function testCannotAccessUrl()
     {
         $test = Http::is_url_accessible('http://www.tatayoyomacouille.fr');
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertFalse($test);
     }
 
@@ -91,8 +91,8 @@ final class HttpTest extends TestCase
     public function testCanGetHttpCode()
     {
         $test = Http::get_http_code('http://www.free.fr');
-        $this->assertInternalType('integer', $test);
-        $this->assertEquals(302, $test);
+        $this->assertIsInt($test);
+        $this->assertEquals(301, $test);
     }
 
     /**
@@ -101,7 +101,7 @@ final class HttpTest extends TestCase
     public function testCannotGetHttpCode()
     {
         $test = Http::get_http_code('http://www.tatayoyomacouille.fr');
-        $this->assertInternalType('integer', $test);
+        $this->assertIsInt($test);
         $this->assertEquals(0, $test);
     }
 
@@ -115,7 +115,7 @@ final class HttpTest extends TestCase
     public function testCanUrlRemoveQuery()
     {
         $test = Http::url_remove_query('http://www.free.fr/page1/souspage2?param1=value1&param2=value2');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('http://www.free.fr/page1/souspage2', $test);
     }
 
@@ -125,7 +125,7 @@ final class HttpTest extends TestCase
     public function testCannotUrlRemoveQuery()
     {
         $test = Http::url_remove_query('freecsdcfr?param1=value1&param2=value2');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('http://freecsdcfr', $test);
     }
 
@@ -139,7 +139,7 @@ final class HttpTest extends TestCase
     public function testCanUrlRemoveQueryAndPath()
     {
         $test = Http::url_remove_query_and_path('http://www.free.fr/page1/souspage2?param1=value1&param2=value2');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('http://www.free.fr', $test);
     }
 
@@ -149,7 +149,7 @@ final class HttpTest extends TestCase
     public function testCannotUrlRemoveQueryAndPath()
     {
         $test = Http::url_remove_query_and_path('freecsdcfr/page1/souspage2?param1=value1&param2=value2');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('', $test);
     }
 
@@ -163,7 +163,7 @@ final class HttpTest extends TestCase
     public function testCanGrabImage()
     {
         $test = Http::grab_image('https://hugo.maugey.fr/img/hugo_maugey.jpg', __DIR__ . '/../../../data/hugo_maugey.jpg');
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertTrue($test);
     }
 
@@ -172,8 +172,8 @@ final class HttpTest extends TestCase
      */
     public function testCannotGrabImage()
     {
-        $test = Http::grab_image('https://free.fr/img/martin_carre.jpg', __DIR__ . '/../../../data/martin_carre.jpg');
-        $this->assertInternalType('boolean', $test);
+        $test = Http::grab_image('https://naturo-paca.fr/img/martin_carre.jpg', __DIR__ . '/../../../data/martin_carre.jpg');
+        $this->assertIsBool($test);
         $this->assertFalse($test);
     }
 
@@ -187,7 +187,7 @@ final class HttpTest extends TestCase
     public function testCanGetDefaultHeaders()
     {
         $test = Http::get_default_headers('hugo.maugey.fr');
-        // $this->assertInternalType('array', $test);
+        $this->assertIsArray($test);
         // $this->assertArrayHasKey('Connection', $test);
         // $this->assertArrayHasKey('Accept', $test);
         // $this->assertArrayHasKey('Accept-Charset', $test);
@@ -202,7 +202,7 @@ final class HttpTest extends TestCase
     public function testCannotGetDefaultHeaders()
     {
         $test = Http::get_default_headers(null);
-        $this->assertInternalType('array', $test);
+        $this->assertIsArray($test);
         // $this->assertArrayHasKey('Connection', $test);
         // $this->assertArrayHasKey('Accept', $test);
         // $this->assertArrayHasKey('Accept-Charset', $test);
@@ -221,7 +221,7 @@ final class HttpTest extends TestCase
     public function testCanExtractExtensionFromUrl()
     {
         $test = Http::extract_extension_from_url('https://www.boom.co.uk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('co.uk', $test);
     }
 
@@ -231,7 +231,7 @@ final class HttpTest extends TestCase
     public function testCannotExtractExtensionFromUrl()
     {
         $test = Http::extract_extension_from_url('https://www.boom.couk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         // $this->assertEquals('boom.co.uk', $test);
         // assertException()
     }
@@ -246,7 +246,7 @@ final class HttpTest extends TestCase
     public function testCanExtractTldFromUrl()
     {
         $test = Http::extract_tld_from_url('https://www.boom.co.uk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('boom.co.uk', $test);
     }
 
@@ -256,7 +256,7 @@ final class HttpTest extends TestCase
     public function testCannotExtractTldFromUrl()
     {
         $test = Http::extract_tld_from_url('https://www.boom.couk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         // $this->assertEquals('boom.co.uk', $test);
         // assertException()
     }
@@ -271,7 +271,7 @@ final class HttpTest extends TestCase
     public function testCanExtractSubdomainFromUrl()
     {
         $test = Http::extract_subdomain_from_url('https://www.boom.co.uk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('www', $test);
     }
 
@@ -281,7 +281,7 @@ final class HttpTest extends TestCase
     public function testCannotExtractSubdomainFromUrl()
     {
         $test = Http::extract_subdomain_from_url('https://www.boom.couk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('www', $test);
         // assertException
     }
@@ -296,7 +296,7 @@ final class HttpTest extends TestCase
     public function testCanExtractDomainFromUrl()
     {
         $test = Http::extract_domain_from_url('https://www.boom.co.uk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('www.boom.co.uk', $test);
     }
 
@@ -306,7 +306,7 @@ final class HttpTest extends TestCase
     public function testCannotExtractDomainFromUrl()
     {
         $test = Http::extract_domain_from_url('https://www.boom.couk/page1/sspage2?query=value#coucou');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('www.boom.couk', $test);
         // assertException
     }
@@ -321,7 +321,7 @@ final class HttpTest extends TestCase
     // public function testCanExtractRequestHeadersBody()
     // {
     //     $test = Http::extract_request_headers_body($html_with_headers);
-    //     $this->assertInternalType('string', $test);
+    //     $this->assertIsString($test);
     // }
 
 
@@ -335,7 +335,7 @@ final class HttpTest extends TestCase
     public function testCanHeaderStatus()
     {
         $test = Http::header_status(200);
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertFalse($test);
     }
 
@@ -345,7 +345,7 @@ final class HttpTest extends TestCase
     public function testCannotHeaderStatus()
     {
         $test = Http::header_status(702);
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertFalse($test);
     }
 
@@ -359,7 +359,7 @@ final class HttpTest extends TestCase
     public function testCanGetRedirectUrl()
     {
         $test = Http::get_redirect_url('http://free.fr');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         // $this->assertEquals('http://portail.free.fr/', $test);
         // $this->assertArrayHasKey($test, [
         //     'http://www.free.fr/freebox/index.html',
@@ -372,9 +372,9 @@ final class HttpTest extends TestCase
      */
     public function testCannotGetRedirectUrl()
     {
-        $test = Http::get_redirect_url('http://maugey.fr');
-        $this->assertInternalType('string', $test);
-        $this->assertEquals('https://maugey.fr/', $test);
+        $test = Http::get_redirect_url('http://hugo.maugey.fr');
+        $this->assertIsString($test);
+        $this->assertEquals('https://hugo.maugey.fr/', $test);
     }
 
     /* ************************************************* */
@@ -387,7 +387,7 @@ final class HttpTest extends TestCase
     public function testCanGetAllRedirects()
     {
         $test = Http::get_all_redirects('http://free.fr');
-        $this->assertInternalType('array', $test);
+        $this->assertIsArray($test);
         // $this->assertArrayHasKey('jack', $this->array1);
     }
 
@@ -397,7 +397,7 @@ final class HttpTest extends TestCase
     public function testCannotGetAllRedirects()
     {
         $test = Http::get_all_redirects('http://fraa.fr');
-        $this->assertInternalType('array', $test);
+        $this->assertIsArray($test);
         // $this->assertArrayHasKey('jack', $this->array1);
     }
 
@@ -411,7 +411,7 @@ final class HttpTest extends TestCase
     public function testCanGetFinalUrl()
     {
         $test = Http::get_final_url('http://free.fr');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         // $this->assertEquals('http://portail.free.fr/', $test);
         // $this->assertArrayHasKey($test, [
         //     'http://www.free.fr/freebox/index.html',
@@ -425,7 +425,7 @@ final class HttpTest extends TestCase
     public function testCannotGetFinalUrl()
     {
         $test = Http::get_final_url('http://www.fraa.fr');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         $this->assertEquals('http://www.fraa.fr', $test);
     }
 
@@ -439,7 +439,7 @@ final class HttpTest extends TestCase
     public function testCanCheckTxtRecord()
     {
         $test = Http::check_txt_record('https://hugo.maugey.fr', 'maugey.fr.');
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         // $this->assertTrue($test);
     }
 
@@ -449,7 +449,7 @@ final class HttpTest extends TestCase
     public function testCannotCheckTxtRecord()
     {
         $test = Http::check_txt_record('https://hugo.maugey.fr', 'CACA');
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         // $this->assertFalse($test);
     }
     
@@ -463,7 +463,7 @@ final class HttpTest extends TestCase
     /*public function testCanWaitForZoneOk()
     {
         $test = Http::wait_for_zone_ok($domain, $ip, $txt_record, $wait_minutes = 15);
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertTrue($test);
     }*/
     
@@ -473,7 +473,7 @@ final class HttpTest extends TestCase
     /*public function testCannotWaitForZoneOk()
     {
         $test = Http::wait_for_zone_ok($domain, $ip, $txt_record, $wait_minutes = 15);
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertTrue($test);
     }*/
     
@@ -487,7 +487,7 @@ final class HttpTest extends TestCase
     /*public function testCanTestZone()
     {
         $test = Http::is_zone_ok($domain, $ip, $txt_record);
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertTrue($test);
     }*/
     
@@ -497,7 +497,7 @@ final class HttpTest extends TestCase
     /*public function testCannotTestZone()
     {
         $test = Http::is_zone_ok($domain, $ip, $txt_record);
-        $this->assertInternalType('boolean', $test);
+        $this->assertIsBool($test);
         $this->assertTrue($test);
     }*/
 
@@ -511,7 +511,7 @@ final class HttpTest extends TestCase
     public function testCanGetNameServers()
     {
         $test = Http::get_name_servers('maugey.fr');
-        $this->assertInternalType('array', $test);
+        $this->assertIsArray($test);
         // $this->assertTrue($test);
     }
     
@@ -525,7 +525,7 @@ final class HttpTest extends TestCase
     public function testCanAddEscapedFragment()
     {
         $test = Http::add_escaped_fragment('https://www.free.fr/coucou/titre.php.encore=tata');
-        $this->assertInternalType('string', $test);
+        $this->assertIsString($test);
         // $this->assertTrue($test);
     }
 
