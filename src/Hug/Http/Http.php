@@ -152,8 +152,8 @@ class Http
             $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close ($ch);
 
-            error_log('retcode : ' . $retcode);
-            error_log('raw : ' . $raw);
+            // error_log('retcode : ' . $retcode);
+            // error_log('raw : ' . $raw);
 
             if($retcode===200)
             {
