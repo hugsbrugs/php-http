@@ -264,11 +264,11 @@ class Http
         $domain = '';
 
         $components = tld_extract($url);
-        if($components->subdomain!=='')
+        if($components->subdomain!='')
         {
             $domain = $components->subdomain.'.';
         }
-        if($components->hostname!=='')
+        if($components->hostname!='')
         {
             $domain .= $components->hostname.'.';
         }
@@ -890,6 +890,44 @@ class Http
         // echo "You have CORS!";
     }
 
+    /**
+     *
+     * @param string $url
+     * @return string $filename
+     */
+    public static function url_2_filename($url)
+    {
+        $filename = '';
+
+        $path = parse_url($url); 
+        // error_log('parse : '.print_r($path, true));
+        $components = tld_extract($url);
+        // var_dump($components);
+        
+        if(isset($path['scheme']) && strlen($path['scheme'])>0)
+        {
+            $filename = $path['scheme'].'-';
+        }
+
+        if($components->subdomain!='')
+        {
+            $filename .= $components->subdomain.'.';
+        }
+        if($components->hostname!='')
+        {
+            $filename .= $components->hostname.'.';
+        }
+        $filename .= $components->suffix;
+        
+        $path = parse_url($url); 
+        
+        if(isset($path['path']) && strlen($path['path'])>0)
+        {
+            $filename .= str_replace(['/', ' '], '-', $path['path']);
+        }
+        
+        return $filename;
+    }
 
 }
 

@@ -129,6 +129,12 @@ To enable CORS, put this line at top of your PHP script
 Http::cors();
 ```
 
+Converts an URL to a filename
+It does not encode URL parameters (only scheme - domain - folders - file)
+```php
+Http::url_2_filename($url);
+```
+
 ## Unit Tests
 
 ```
