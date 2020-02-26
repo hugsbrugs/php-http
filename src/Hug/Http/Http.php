@@ -3,6 +3,7 @@
 namespace Hug\Http;
 
 use LayerShifter\TLDExtract\Extract;
+use TrueBV\Punycode;
 
 /**
  *
@@ -210,6 +211,22 @@ class Http
         return $compiledHeaders;
     }
 
+    /**
+     * TODO
+     */
+    public static function get_compiled_headers($headers, $url)
+    {
+        # Extract host from URL
+        $host = self::extract_domain_from_url(self::url_idn_to_ascii($url));
+        $headers['Host'] = $host;
+
+        $compiledHeaders = [];
+            foreach($headers as $k=>$v)
+                $compiledHeaders[] = $k.': '.$v;
+
+        return $compiledHeaders;
+    }
+
 
     /**
      * Extracts a TLD (Top Level Domain) from an URL
@@ -222,7 +239,7 @@ class Http
         $extension = '';
         
         $components = tld_extract($url);
-        if($components->suffix!=='')
+        if($components->suffix!='')
         {
             $extension = $components->suffix;
         }
@@ -243,7 +260,7 @@ class Http
         $tld = '';
         
         $components = tld_extract($url);
-        if($components->hostname!=='')
+        if($components->hostname!='')
         {
             $tld .= $components->hostname . '.';
         }
@@ -288,7 +305,7 @@ class Http
         $subdomain = '';
 
         $components = tld_extract($url);
-        if($components->subdomain!=='')
+        if($components->subdomain!='')
         {
             $subdomain = $components->subdomain;
         }
@@ -927,6 +944,61 @@ class Http
         }
         
         return $filename;
+    }
+
+    /**
+     * Transforms an URL encoded in IDN to an UTF-8 encoded URL
+     *
+     * @param string $url
+     * @param string $rtrim_slash
+     * @return string $new_url
+     */
+    public static function url_idn_to_utf8($url, $rtrim_slash = false)
+    {
+        $Punycode = new Punycode();
+
+        $parts = parse_url($url);
+        $new_url = http_build_url($url, [
+            // 'host' => idn_to_utf8($parts['host'])
+            'host' => $Punycode->decode($parts['host'])
+            ]);
+        if($rtrim_slash)
+            $new_url = rtrim($new_url, '/');
+        return $new_url;
+    }
+
+    /**
+     * Transforms an URL encoded in IDN to an ASCII encoded URL
+     *
+     * @param string $url
+     * @param string $rtrim_slash
+     * @return string $new_url
+     */
+    public static function url_idn_to_ascii($url, $rtrim_slash = false)
+    {
+        /*error_log('url_idn_to_ascii : ' . $url);*/
+
+        $parts = parse_url($url);
+        if(isset($parts['host']))
+        {
+            $Punycode = new Punycode();
+
+            $new_url = http_build_url($url, [
+                // 'host' => idn_to_ascii($parts['host'])
+                'host' => $Punycode->encode($parts['host'])
+            ]);
+        }
+        else
+        {
+            $new_url = $url;
+        }
+
+        if($rtrim_slash)
+        {
+            $new_url = rtrim($new_url, '/');
+        }
+        
+        return $new_url;
     }
 
 }
