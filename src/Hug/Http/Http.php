@@ -81,7 +81,6 @@ class Http
         return $retcode;
     }
 
-
     /**
      * Cleans an url from its query parameters
      *
@@ -148,7 +147,7 @@ class Http
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
             # Set User-Agent because lots of servers deny request with empty UA
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0');
             $raw = curl_exec($ch);
             $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close ($ch);
@@ -639,45 +638,29 @@ class Http
      *
      * @link http://stackoverflow.com/questions/3799134/how-to-get-final-url-after-following-http-redirections-in-pure-php
      */
-    public static function get_redirect_url($url)
+    public static function get_redirect_url($url, $timeout = 5)
     {
-        $redirect_url = null; 
+        $url = str_replace("&amp;", "&", urldecode(trim($url)));
 
-        $url_parts = @parse_url($url);
-        if (!$url_parts) return false;
-        if (!isset($url_parts['host'])) return false; //can't process relative URLs
-        if (!isset($url_parts['path'])) $url_parts['path'] = '/';
+        // $cookie = tempnam("/tmp", "CURLCOOKIE");
+        $ch = curl_init();
+        curl_setopt( $ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0" );
+        curl_setopt($ch, CURLOPT_URL, $url );
+        // curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false); // important !!
+        curl_setopt($ch, CURLOPT_ENCODING, "" );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt($ch, CURLOPT_AUTOREFERER, true );
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout );
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, Http::get_default_headers(Http::extract_domain_from_url($url)));
 
-        $sock = fsockopen($url_parts['host'], (isset($url_parts['port']) ? (int)$url_parts['port'] : 80), $errno, $errstr, 30);
-        if (!$sock) return false;
-
-        $request = "HEAD " . $url_parts['path'] . (isset($url_parts['query']) ? '?'.$url_parts['query'] : '') . " HTTP/1.1\r\n"; 
-        $request .= 'Host: ' . $url_parts['host'] . "\r\n"; 
-        $request .= "User-Agent: Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30\r\n";
-        $request .= "Connection: Close\r\n\r\n"; 
-        fwrite($sock, $request);
-        $response = '';
-
-        while(!feof($sock)) $response .= fread($sock, 8192);
-        fclose($sock);
-
-        if (preg_match('/^Location: (.+?)$/m', $response, $matches))
-        {
-            if ( substr($matches[1], 0, 1) == "/" )
-            {
-                return $url_parts['scheme'] . "://" . $url_parts['host'] . trim($matches[1]);
-            }
-            else
-            {
-                return trim($matches[1]);
-            }
-
-        }
-        else
-        {
-            return false;
-        }
-
+        $content = curl_exec($ch);
+        $response = curl_getinfo($ch);
+        curl_close ( $ch );
+        
+        return $response['url'];
     }
 
     /**
@@ -687,19 +670,57 @@ class Http
      * @param string $url
      * @return array
      */
-    public static function get_all_redirects($url)
+    public static function get_all_redirects($url, $timeout = 5, $redirects = [])
     {
-        $redirects = [];
-        while ($newurl = Http::get_redirect_url($url))
+        $url = str_replace("&amp;", "&", urldecode(trim($url)));
+
+        // $cookie = tempnam("/tmp", "CURLCOOKIE");
+        $ch = curl_init();
+        curl_setopt( $ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0" );
+        curl_setopt($ch, CURLOPT_URL, $url );
+        // curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false); // important !!
+        curl_setopt($ch, CURLOPT_ENCODING, "" );
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt($ch, CURLOPT_AUTOREFERER, true );
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout );
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout );
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, Http::get_default_headers(Http::extract_domain_from_url($url)));
+
+        $content = curl_exec( $ch );
+        $response = curl_getinfo( $ch );
+        curl_close ( $ch );
+        
+        // error_log('http : ' . $response['http_code']);
+        $redirects[] = [
+            'url' => $response['url'],
+            'code' => $response['http_code']
+        ];
+
+        if ($response['http_code'] == 301 || $response['http_code'] == 302)
         {
-            if (in_array($newurl, $redirects))
+            ini_set("user_agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0");
+            $headers = get_headers($response['url']);
+
+            $location = "";
+            foreach($headers as $value)
             {
-                break;
+                if (substr(strtolower($value), 0, 9) == "location:")
+                {
+                    return Http::get_all_redirects(trim(substr($value, 9, strlen($value))), $timeout, $redirects);
+                }
             }
-            $redirects[] = $newurl;
-            $url = $newurl;
         }
-        return $redirects;
+
+        if(preg_match("/window\.location\.replace\('(.*)'\)/i", $content, $value) || preg_match("/window\.location\=\"(.*)\"/i", $content, $value))
+        {
+            return Http::get_all_redirects($value[1], $timeout, $redirects);
+        }
+        else
+        {
+            return $redirects;
+        }
     }
 
     /**
@@ -708,19 +729,45 @@ class Http
      * Returns $url itself if it isn't a redirect.
      *
      * @param string $url
-     * @return string
+     * @param string $return url|code|all
+     * @return string| array
      */
-    public static function get_final_url($url)
+    public static function get_final_url($url, $return = 'url')
     {
-        $redirects = Http::get_all_redirects($url);
-        if (count($redirects)>0)
+        $ch = curl_init($url);
+        # SET NOBODY TO SPEED
+        // curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0); 
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        // curl_setopt($curl, CURLOPT_VERBOSE, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, Http::get_default_headers(Http::extract_domain_from_url($url)));
+
+        curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        curl_close($ch);
+
+        if($return==='url')
         {
-            return array_pop($redirects);
+            $response = $url;
         }
-        else
+        if($return==='code')
         {
-            return $url;
+            $response = $code;
         }
+        if($return==='all')
+        {
+            $response = [
+                'code' => $code,
+                'url' => $url
+            ];  
+        }
+        return $response;
     }
 
     /**
