@@ -60,6 +60,11 @@ Extracts extention from an URL
 Http::extract_extension_from_url($url);
 ```
 
+Extracts scheme (ftp, http) from an URL
+```php
+Http::extract_scheme_from_url($url);
+```
+
 Extracts a TLD (Top Level Domain) from an URL
 ```php
 Http::extract_tld_from_url($url);
@@ -75,6 +80,7 @@ Extracts a domain name from an URL
 Http::extract_domain_from_url($url);
 ```
 
+Separates Headers from Body in CURL response
 ```php
 Http::extract_request_headers_body($html_with_headers);
 ```
@@ -143,4 +149,4 @@ composer exec phpunit
 
 ## Author
 
-Hugo Maugey [visit my website ;)](https://hugo.maugey.fr)
+Hugo Maugey [Webmaster](https://hugo.maugey.fr/webmaster) | [Consultant SEO](https://hugo.maugey.fr/consultant-seo) | [Fullstack developer](https://hugo.maugey.fr/developpeur-web)

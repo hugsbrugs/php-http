@@ -237,6 +237,30 @@ final class HttpTest extends TestCase
     }
 
     /* ************************************************* */
+    /* ********** Http::extract_scheme_from_url ******** */
+    /* ************************************************* */
+
+    /**
+     *
+     */
+    public function testCanExtractSchemeFromUrl()
+    {
+        $test = Http::extract_scheme_from_url('https://www.boom.co.uk/page1/sspage2?query=value#coucou');
+        $this->assertIsString($test);
+        $this->assertEquals('https', $test);
+    }
+
+    /**
+     *
+     */
+    public function testCannotExtractSchemeFromUrl()
+    {
+        $test = Http::extract_scheme_from_url('www.boom.couk/page1/sspage2?query=value#coucou');
+        $this->assertIsString($test);
+        $this->assertEquals('', $test);
+    }
+
+    /* ************************************************* */
     /* *********** Http::extract_tld_from_url ********** */
     /* ************************************************* */
 

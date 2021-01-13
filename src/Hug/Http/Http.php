@@ -247,6 +247,24 @@ class Http
 
         return $extension;
     }
+
+    /**
+     * Extracts scheme (ftp, http) from an URL
+     *
+     * Example : 
+     * input : https://www.monsite.fr/fr/coucou/index.php?id=3&num=50
+     * output : https
+     *
+     * @param string $url
+     * @return string $scheme
+     */
+    public static function extract_scheme_from_url($url)
+    {
+        $scheme = '';
+        $url_pieces = parse_url($url);
+        $scheme = isset($url_pieces['scheme']) ? $url_pieces['scheme'] : '';
+        return $scheme;
+    }
     
 
     /**
