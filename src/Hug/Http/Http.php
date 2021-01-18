@@ -628,7 +628,6 @@ class Http
         return false;
     }
 
-
     /**
      * Gets the address that the provided URL redirects to,
      * or false if there's no redirect. 
@@ -638,7 +637,7 @@ class Http
      *
      * @link http://stackoverflow.com/questions/3799134/how-to-get-final-url-after-following-http-redirections-in-pure-php
      */
-    public static function get_redirect_url($url, $timeout = 5)
+    public static function get_redirect_url($url, $timeout = 5, $return = 'url')
     {
         $url = str_replace("&amp;", "&", urldecode(trim($url)));
 
@@ -657,10 +656,36 @@ class Http
         curl_setopt($ch, CURLOPT_HTTPHEADER, Http::get_default_headers(Http::extract_domain_from_url($url)));
 
         $content = curl_exec($ch);
-        $response = curl_getinfo($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if($code===200)
+        {
+            # Current URL
+            $url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        }
+        else
+        {
+            # Redirect to URL
+            $url = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+        }
         curl_close ( $ch );
+
+        if($return==='url')
+        {
+            $response = $url;
+        }
+        elseif($return==='code')
+        {
+            $response = $code;
+        }
+        else
+        {
+            $response = [
+                'code' => $code,
+                'url' => $url
+            ];  
+        }
         
-        return $response['url'];
+        return $response;
     }
 
     /**

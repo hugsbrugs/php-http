@@ -90,9 +90,9 @@ Sets a php script desired status code (usefull for API)
 Http::header_status($statusCode);
 ```
 
-Gets the address that the provided URL redirects to, or FALSE if there's no redirect.
+Gets the address and/or http code that the provided URL redirects to. $return can be : url/code/all
 ```php
-Http::get_redirect_url($url);
+Http::get_redirect_url($url, $timeout = 5, $return = 'url');
 ```
 
 Follows and collects all redirects, in order, for the given URL.
@@ -100,9 +100,9 @@ Follows and collects all redirects, in order, for the given URL.
 Http::get_all_redirects($url);
 ```
 
-Gets the address that the URL ultimately leads to.
+Gets the address and/or http code that the URL ultimately leads to. $return can be : url/code/all
 ```php
-Http::get_final_url($url);
+Http::get_final_url($url, $return = 'url');
 ```
 
 Check a TXT record in domain zone file
