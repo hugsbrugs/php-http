@@ -704,7 +704,8 @@ class Http
         curl_setopt( $ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0" );
         curl_setopt($ch, CURLOPT_URL, $url );
         // curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false); // important !!
+        # Most important !!
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($ch, CURLOPT_ENCODING, "" );
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
         curl_setopt($ch, CURLOPT_AUTOREFERER, true );
@@ -713,20 +714,30 @@ class Http
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, Http::get_default_headers(Http::extract_domain_from_url($url)));
 
-        $content = curl_exec( $ch );
-        $response = curl_getinfo( $ch );
-        curl_close ( $ch );
-        
-        // error_log('http : ' . $response['http_code']);
+        $content = curl_exec($ch);
+
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $redirect_url = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+        $effective_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+
+        # When redirect is partial (eg: /fr/index.php) aggregate with previous part 
+        if(substr($redirect_url, 0, 1)==='/')
+        {
+            $redirect_url = rtrim($redirects[count($redirects)-1]['url'], '/') . $redirect_url;
+        }
+
         $redirects[] = [
-            'url' => $response['url'],
-            'code' => $response['http_code']
+            'url' => $effective_url,
+            'code' => $code
         ];
 
-        if ($response['http_code'] == 301 || $response['http_code'] == 302)
+        curl_close ($ch);
+
+        if ($code == 301 || $code == 302)
         {
+            /*
             ini_set("user_agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0");
-            $headers = get_headers($response['url']);
+            $headers = get_headers($redirect_url);
 
             $location = "";
             foreach($headers as $value)
@@ -736,8 +747,11 @@ class Http
                     return Http::get_all_redirects(trim(substr($value, 9, strlen($value))), $timeout, $redirects);
                 }
             }
+            */
+            return Http::get_all_redirects($redirect_url, $timeout, $redirects);
         }
 
+        # Javascript redirect
         if(preg_match("/window\.location\.replace\('(.*)'\)/i", $content, $value) || preg_match("/window\.location\=\"(.*)\"/i", $content, $value))
         {
             return Http::get_all_redirects($value[1], $timeout, $redirects);
