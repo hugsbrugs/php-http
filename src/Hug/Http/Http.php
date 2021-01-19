@@ -292,8 +292,8 @@ class Http
 
         $data = [
             'suffix' => $result->getPublicSuffix(),
-            'tld' => $result->getRegistrableDomain()
-            'domain' => $result->getContent()
+            'tld' => $result->getRegistrableDomain(),
+            'domain' => $result->getContent(),
             'subdomain' => $result->getSubDomain()
         ];
 

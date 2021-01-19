@@ -148,7 +148,7 @@ Http::url_2_filename($url);
 
 ## Dependecies
 https://github.com/jeremykendall/php-domain-parser
-
+https://github.com/jeremykendall/php-domain-parser/tree/5.7.0
 https://publicsuffix.org/list/public_suffix_list.dat
 
 
