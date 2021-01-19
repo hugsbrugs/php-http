@@ -280,15 +280,13 @@ class Http
     }
 
     /**
-     * Extracts a TLD (Top Level Domain) from an URL
+     * Extracts suffix, tld, domain, subdomain from an URL
      *
      * @param string $url
-     * @return string $tld 
+     * @return array $data 
      */
     public static function extract_all_from_url($url)
     {
-        $data = [];
-        
         $publicSuffixList = Http::get_suffix_list();
         $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
 
