@@ -2,7 +2,7 @@
 
 namespace Hug\Http;
 
-use LayerShifter\TLDExtract\Extract;
+use Pdp\Rules as Rules;
 use TrueBV\Punycode;
 
 /**
@@ -10,6 +10,59 @@ use TrueBV\Punycode;
  */
 class Http
 {
+
+    /**
+     * Updates data from https://publicsuffix.org/list/public_suffix_list.dat
+     * into local file for cache storage
+     */
+    public static function update_suffix_list()
+    {
+        self::suffix_list_path();
+        if(is_writable(PUBLIC_SUFFIX_LIST))
+        {
+            $url = 'https://publicsuffix.org/list/public_suffix_list.dat';
+            $data = file_get_contents($url);
+            if($data!==false)
+            {
+                if(file_put_contents(PUBLIC_SUFFIX_LIST, $data)===false)
+                {
+                    throw new Exception("Error writing data", 1);
+                }
+            }
+            else
+            {
+                throw new Exception("Error downloading data", 1);
+            }
+        }
+        else
+        {
+            throw new Exception("File not writable", 1);
+        }
+    }
+
+    /**
+     *
+     */
+    public static function get_suffix_list()
+    {
+        self::suffix_list_path();
+        # php-domain-parser V6
+        # php-domain-parser V5
+        return Rules::createFromPath(PUBLIC_SUFFIX_LIST);
+    }
+    
+    /**
+     * Define default PUBLIC_SUFFIX_LIST constant for storing : 
+     * https://publicsuffix.org/list/public_suffix_list.dat
+     */
+    private static function suffix_list_path()
+    {
+        if(!defined('PUBLIC_SUFFIX_LIST') || !is_file(PUBLIC_SUFFIX_LIST))
+        {
+            define('PUBLIC_SUFFIX_LIST', __DIR__ . '/../../../cache/public_suffix_list.dat');
+        }
+    }
+
     /**
      * Execute shell nslookup command
      *
@@ -237,12 +290,13 @@ class Http
     {
         $extension = '';
         
-        $components = tld_extract($url);
-        if($components->suffix!='')
-        {
-            $extension = $components->suffix;
-        }
-        
+        $publicSuffixList = Http::get_suffix_list();
+        $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
+
+        # php-domain-parser V6
+        // $extension = $result->suffix()->toString();
+        # php-domain-parser V5
+        $extension = $result->getPublicSuffix();
 
         return $extension;
     }
@@ -276,12 +330,12 @@ class Http
     {
         $tld = '';
         
-        $components = tld_extract($url);
-        if($components->hostname!='')
-        {
-            $tld .= $components->hostname . '.';
-        }
-        $tld .= $components->suffix;
+        $publicSuffixList = Http::get_suffix_list();
+        $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
+        # php-domain-parser V6
+        // $tld = $result->registrableDomain()->toString();
+        # php-domain-parser V5
+        $tld = $result->getRegistrableDomain();
 
         return $tld;
     }
@@ -297,16 +351,12 @@ class Http
     {
         $domain = '';
 
-        $components = tld_extract($url);
-        if($components->subdomain!='')
-        {
-            $domain = $components->subdomain.'.';
-        }
-        if($components->hostname!='')
-        {
-            $domain .= $components->hostname.'.';
-        }
-        $domain .= $components->suffix;
+        $publicSuffixList = Http::get_suffix_list();
+        $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
+        # php-domain-parser V6
+        // $domain = $result->domain()->toString();
+        # php-domain-parser V5
+        $domain = $result->getContent();
 
         return $domain;
     }
@@ -321,11 +371,12 @@ class Http
     {
         $subdomain = '';
 
-        $components = tld_extract($url);
-        if($components->subdomain!='')
-        {
-            $subdomain = $components->subdomain;
-        }
+        $publicSuffixList = Http::get_suffix_list();
+        $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
+        # php-domain-parser V6
+        // $subdomain = $result->subDomain()->toString();
+        # php-domain-parser V5
+        $subdomain = $result->getSubDomain();
 
         return $subdomain;
     }
@@ -1022,25 +1073,19 @@ class Http
 
         $path = parse_url($url); 
         // error_log('parse : '.print_r($path, true));
-        $components = tld_extract($url);
-        // var_dump($components);
-        
+
+        $publicSuffixList = Http::get_suffix_list();
+        $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
+
         if(isset($path['scheme']) && strlen($path['scheme'])>0)
         {
             $filename = $path['scheme'].'-';
         }
-
-        if($components->subdomain!='')
-        {
-            $filename .= $components->subdomain.'.';
-        }
-        if($components->hostname!='')
-        {
-            $filename .= $components->hostname.'.';
-        }
-        $filename .= $components->suffix;
         
-        $path = parse_url($url); 
+        # php-domain-parser V6
+        // $filename .= $result->domain()->toString();
+        # php-domain-parser V5
+        $filename .= $result->getContent();
         
         if(isset($path['path']) && strlen($path['path'])>0)
         {

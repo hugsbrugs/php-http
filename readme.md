@@ -141,6 +141,12 @@ It does not encode URL parameters (only scheme - domain - folders - file)
 Http::url_2_filename($url);
 ```
 
+## Dependecies
+https://github.com/jeremykendall/php-domain-parser
+
+https://publicsuffix.org/list/public_suffix_list.dat
+
+
 ## Unit Tests
 
 ```

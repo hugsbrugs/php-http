@@ -8,20 +8,35 @@ use Hug\Http\Http as Http;
 $url = 'https://www.naturo-paca.fr';
 
 
-$redir = Http::get_final_url($url);
-echo $redir;
+// $redir = Http::get_final_url($url);
+// echo $redir;
 
-$redir = Http::get_all_redirects($url);
-print_r($redir);
+// $redir = Http::get_all_redirects($url);
+// print_r($redir);
 
-$redir = Http::get_redirect_url($url);
-echo $redir;
+// $redir = Http::get_redirect_url($url);
+// echo $redir;
 
-exit;
+// exit;
 
-$url = 'https://www.google.com/search?q=tony+parker&oq=tony+parker';
+$url = 'https://www.free.google.com/search?q=tony+parker&oq=tony+parker';
+// $url = 'www.google.com';
+
+$extension = Http::extract_extension_from_url($url);
+error_log('Extension : ' . $extension);
+
 $domain = Http::extract_domain_from_url($url);
-echo $domain;
+error_log('Domain : ' . $domain);
+
+$tld = Http::extract_tld_from_url($url);
+error_log('Tld : ' . $tld);
+
+$subdomain = Http::extract_subdomain_from_url($url);
+error_log('Subdomain : ' . $subdomain);
+
+$filename = Http::url_2_filename($url);
+error_log('filename : ' . $filename);
+
 
 exit;
 

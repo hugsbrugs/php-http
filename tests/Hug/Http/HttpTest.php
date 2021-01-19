@@ -382,7 +382,7 @@ final class HttpTest extends TestCase
      */
     public function testCanGetRedirectUrl()
     {
-        $test = Http::get_redirect_url('http://free.fr');
+        $test = Http::get_redirect_url('https://www.naturo-paca.fr');
         $this->assertIsString($test);
         // $this->assertEquals('http://portail.free.fr/', $test);
         // $this->assertArrayHasKey($test, [
@@ -450,7 +450,7 @@ final class HttpTest extends TestCase
     {
         $test = Http::get_final_url('http://www.fraa.fr');
         $this->assertIsString($test);
-        $this->assertEquals('http://www.fraa.fr', $test);
+        $this->assertEquals('http://www.fraa.fr/', $test);
     }
 
     /* ************************************************* */
