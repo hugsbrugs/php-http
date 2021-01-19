@@ -279,6 +279,28 @@ class Http
         return $compiledHeaders;
     }
 
+    /**
+     * Extracts a TLD (Top Level Domain) from an URL
+     *
+     * @param string $url
+     * @return string $tld 
+     */
+    public static function extract_all_from_url($url)
+    {
+        $data = [];
+        
+        $publicSuffixList = Http::get_suffix_list();
+        $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
+
+        $data = [
+            'suffix' => $result->getPublicSuffix(),
+            'tld' => $result->getRegistrableDomain()
+            'domain' => $result->getContent()
+            'subdomain' => $result->getSubDomain()
+        ];
+
+        return $data;
+    }
 
     /**
      * Extracts a TLD (Top Level Domain) from an URL

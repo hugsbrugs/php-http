@@ -55,6 +55,11 @@ Returns basic HTTP headers for a CURL request
 Http::get_default_headers($host);
 ```
 
+Extracts suffix, tld, domain and subdomain from an URL
+```php
+Http::extract_all_from_url($url);
+```
+
 Extracts extention from an URL
 ```php
 Http::extract_extension_from_url($url);
@@ -151,6 +156,7 @@ https://publicsuffix.org/list/public_suffix_list.dat
 
 ```
 composer exec phpunit
+phpunit --configuration phpunit.xml
 ```
 
 ## Author
