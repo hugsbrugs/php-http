@@ -821,16 +821,20 @@ class Http
             */
             return Http::get_all_redirects($redirect_url, $timeout, $redirects);
         }
-
-        # Javascript redirect
-        if(preg_match("/window\.location\.replace\('(.*)'\)/i", $content, $value) || preg_match("/window\.location\=\"(.*)\"/i", $content, $value))
-        {
-            return Http::get_all_redirects($value[1], $timeout, $redirects);
-        }
         else
         {
-            return $redirects;
+            return $redirects;   
         }
+
+        # Javascript redirect : buggy
+        // if(preg_match("/window\.location\.replace\('(.*)'\)/i", $content, $value) || preg_match("/window\.location\=\"(.*)\"/i", $content, $value))
+        // {
+        //     return Http::get_all_redirects($value[1], $timeout, $redirects);
+        // }
+        // else
+        // {
+        //     return $redirects;
+        // }
     }
 
     /**
