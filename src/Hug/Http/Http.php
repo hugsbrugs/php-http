@@ -804,8 +804,19 @@ class Http
 
         curl_close ($ch);
 
-        if ($code == 301 || $code == 302)
+        if($code == 301 || $code == 302)
         {
+            # Prevent infinite loop
+            $break = false;
+            if(count($redirects) > 3)
+            {
+                $last_redirect = $redirects[count($redirects)-1];
+                $before_last_redirect = $redirects[count($redirects)-2];
+                if($last_redirect['url']===$before_last_redirect['url'] && $last_redirect['code']===$before_last_redirect['code'])
+                {
+                    $break = true;
+                }
+            }
             /*
             ini_set("user_agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0");
             $headers = get_headers($redirect_url);
@@ -819,11 +830,18 @@ class Http
                 }
             }
             */
-            return Http::get_all_redirects($redirect_url, $timeout, $redirects);
+            if($break)
+            {
+                return $redirects;
+            }
+            else
+            {
+                return Http::get_all_redirects($redirect_url, $timeout, $redirects);
+            }
         }
         else
         {
-            return $redirects;   
+            return $redirects;
         }
 
         # Javascript redirect : buggy
