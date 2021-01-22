@@ -7,8 +7,9 @@ use Hug\Http\Http as Http;
 // https://stackoverflow.com/questions/10288130/php-curl-following-redirects
 // Infinite redirect
 $url = 'https://www.pharmacieanglofrancaise.fr';
+$url = 'https://www.hotelsbarriere.com/content/hotels/fr.html';
 
-$url = 'https://universpharmacie.fr';
+// $url = 'https://universpharmacie.fr';
 
 // $redir = Http::get_final_url($url);
 // echo $redir;

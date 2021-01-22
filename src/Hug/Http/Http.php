@@ -768,6 +768,7 @@ class Http
      */
     public static function get_all_redirects($url, $timeout = 5, $redirects = [])
     {
+        // error_log('get_all_redirects : ' . $url);
         $url = str_replace("&amp;", "&", urldecode(trim($url)));
 
         // $cookie = tempnam("/tmp", "CURLCOOKIE");
@@ -794,6 +795,7 @@ class Http
         # When redirect is partial (eg: /fr/index.php) aggregate with previous part 
         if(substr($redirect_url, 0, 1)==='/')
         {
+            // error_log('Partial redirect : ' . $redirect_url);
             $redirect_url = rtrim($redirects[count($redirects)-1]['url'], '/') . $redirect_url;
         }
 
@@ -816,6 +818,10 @@ class Http
                 {
                     $break = true;
                 }
+            }
+            if(count($redirects) > 7)
+            {
+                $break = true;
             }
             /*
             ini_set("user_agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0");
