@@ -48,7 +48,8 @@ class Http
         }
         */
         # With Cache System
-        $manager = new Manager(new Cache(), new CurlHttpClient());
+        self::psl_cache();
+        $manager = new Manager(new Cache(HTTP_PSL_CACHE), new CurlHttpClient());
         $manager->refreshRules();
     }
 
@@ -66,9 +67,13 @@ class Http
         */
 
         # With Cache System
-        $manager = new Manager(new Cache(), new CurlHttpClient());
-        $tldCollection = $manager->getTLDs(Manager::RZD_URL, 86400);
-        return $tldCollection;
+        self::psl_cache();
+        $manager = new Manager(new Cache(HTTP_PSL_CACHE), new CurlHttpClient());
+        // $tldCollection = $manager->getTLDs(Manager::RZD_URL, 86400);
+        // return $tldCollection;
+        $rules = $manager->getRules(Manager::PSL_URL, 86400);
+        return $rules;
+
     }
     
     /**
@@ -82,6 +87,19 @@ class Http
             define('PUBLIC_SUFFIX_LIST', __DIR__ . '/../../../cache/public_suffix_list.dat');
         }
     }*/
+
+    /**
+     * Define default PUBLIC_SUFFIX_LIST constant for storing : 
+     * https://publicsuffix.org/list/public_suffix_list.dat
+     */
+    private static function psl_cache()
+    {
+        if(!defined('HTTP_PSL_CACHE') || !is_dir(HTTP_PSL_CACHE))
+        {
+            define('HTTP_PSL_CACHE', '/tmp');
+        }
+    }
+
 
     /**
      * Execute shell nslookup command

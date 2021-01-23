@@ -6,6 +6,8 @@ use Hug\Http\Http as Http;
 
 
 $url = 'https://www.free.google.com/search?q=tony+parker&oq=tony+parker';
+$url = 'https://www.boom.co.uk/page1/sspage2?query=value#coucou';
+// $url = 'http://www.ulb.ac.be';
 // $url = 'www.google.com';
 
 $extension = Http::extract_extension_from_url($url);
