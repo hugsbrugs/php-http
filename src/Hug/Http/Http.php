@@ -3,6 +3,11 @@
 namespace Hug\Http;
 
 use Pdp\Rules as Rules;
+
+use Pdp\Manager;
+use Pdp\Cache;
+use Pdp\CurlHttpClient;
+
 use TrueBV\Punycode;
 
 /**
@@ -14,9 +19,12 @@ class Http
     /**
      * Updates data from https://publicsuffix.org/list/public_suffix_list.dat
      * into local file for cache storage
+     * https://github.com/jeremykendall/php-domain-parser/tree/5.7.2
      */
     public static function update_suffix_list()
     {
+        # Without Cache System
+        /*
         self::suffix_list_path();
         if(is_writable(PUBLIC_SUFFIX_LIST))
         {
@@ -38,6 +46,10 @@ class Http
         {
             throw new Exception("File not writable", 1);
         }
+        */
+        # With Cache System
+        $manager = new Manager(new Cache(), new CurlHttpClient());
+        $manager->refreshRules();
     }
 
     /**
@@ -45,23 +57,31 @@ class Http
      */
     public static function get_suffix_list()
     {
+        # Without Cache System
+        /*
         self::suffix_list_path();
         # php-domain-parser V6
         # php-domain-parser V5
         return Rules::createFromPath(PUBLIC_SUFFIX_LIST);
+        */
+
+        # With Cache System
+        $manager = new Manager(new Cache(), new CurlHttpClient());
+        $tldCollection = $manager->getTLDs(Manager::RZD_URL, 86400);
+        return $tldCollection;
     }
     
     /**
      * Define default PUBLIC_SUFFIX_LIST constant for storing : 
      * https://publicsuffix.org/list/public_suffix_list.dat
      */
-    private static function suffix_list_path()
+    /*private static function suffix_list_path()
     {
         if(!defined('PUBLIC_SUFFIX_LIST') || !is_file(PUBLIC_SUFFIX_LIST))
         {
             define('PUBLIC_SUFFIX_LIST', __DIR__ . '/../../../cache/public_suffix_list.dat');
         }
-    }
+    }*/
 
     /**
      * Execute shell nslookup command

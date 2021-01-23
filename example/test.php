@@ -4,44 +4,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Hug\Http\Http as Http;
 
-// https://stackoverflow.com/questions/10288130/php-curl-following-redirects
-// Infinite redirect
-$url = 'https://www.pharmacieanglofrancaise.fr';
-$url = 'https://www.hotelsbarriere.com/content/hotels/fr.html';
-
-// $url = 'https://universpharmacie.fr';
-
-// $redir = Http::get_final_url($url);
-// echo $redir;
-
-$redir = Http::get_all_redirects($url);
-print_r($redir);
-
-// $redir = Http::get_redirect_url($url);
-// echo $redir;
-
-exit;
-
-$url = 'https://www.free.google.com/search?q=tony+parker&oq=tony+parker';
-// $url = 'www.google.com';
-
-$extension = Http::extract_extension_from_url($url);
-error_log('Extension : ' . $extension);
-
-$domain = Http::extract_domain_from_url($url);
-error_log('Domain : ' . $domain);
-
-$tld = Http::extract_tld_from_url($url);
-error_log('Tld : ' . $tld);
-
-$subdomain = Http::extract_subdomain_from_url($url);
-error_log('Subdomain : ' . $subdomain);
-
-$filename = Http::url_2_filename($url);
-error_log('filename : ' . $filename);
-
-
-exit;
 
 $test = Http::grab_image('https://naturo-paca.fr/img/martin_carre.jpg', __DIR__ . '/../data/martin_carre.jpg');
 
