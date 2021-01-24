@@ -329,10 +329,10 @@ class Http
         $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
 
         $data = [
-            'suffix' => $result->getPublicSuffix(),
-            'tld' => $result->getRegistrableDomain(),
-            'domain' => $result->getContent(),
-            'subdomain' => $result->getSubDomain()
+            'suffix' => $result->getPublicSuffix() !== null ? $result->getPublicSuffix() : '',
+            'tld' => $result->getRegistrableDomain() !== null ? $result->getRegistrableDomain() : '',
+            'domain' => $result->getContent() !== null ? $result->getContent() : '',
+            'subdomain' => $result->getSubDomain() !== null ? $result->getSubDomain() : '' 
         ];
 
         return $data;
@@ -354,7 +354,7 @@ class Http
         # php-domain-parser V6
         // $extension = $result->suffix()->toString();
         # php-domain-parser V5
-        $extension = $result->getPublicSuffix();
+        $extension = $result->getPublicSuffix() !== null ? $result->getPublicSuffix() : '';
 
         return $extension;
     }
@@ -393,7 +393,7 @@ class Http
         # php-domain-parser V6
         // $tld = $result->registrableDomain()->toString();
         # php-domain-parser V5
-        $tld = $result->getRegistrableDomain();
+        $tld = $result->getRegistrableDomain() !== null ? $result->getRegistrableDomain() : '';
 
         return $tld;
     }
@@ -414,7 +414,7 @@ class Http
         # php-domain-parser V6
         // $domain = $result->domain()->toString();
         # php-domain-parser V5
-        $domain = $result->getContent();
+        $domain = $result->getContent() !== null ? $result->getContent() : '';
 
         return $domain;
     }
@@ -434,7 +434,7 @@ class Http
         # php-domain-parser V6
         // $subdomain = $result->subDomain()->toString();
         # php-domain-parser V5
-        $subdomain = $result->getSubDomain();
+        $subdomain = $result->getSubDomain() !== null ? $result->getSubDomain() : '';
 
         return $subdomain;
     }

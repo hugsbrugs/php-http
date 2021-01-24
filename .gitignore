@@ -2,3 +2,4 @@ TODO.txt
 vendor/*
 data/*
 build/*
+.phpunit.result.cache
