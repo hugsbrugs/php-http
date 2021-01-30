@@ -1190,6 +1190,8 @@ class Http
      */
     public static function url_idn_to_utf8($url, $rtrim_slash = false)
     {
+        require_once __DIR__ . '/http_build_url.php';
+
         $Punycode = new Punycode();
 
         $parts = parse_url($url);
@@ -1211,6 +1213,8 @@ class Http
      */
     public static function url_idn_to_ascii($url, $rtrim_slash = false)
     {
+        require_once __DIR__ . '/http_build_url.php';
+        
         /*error_log('url_idn_to_ascii : ' . $url);*/
 
         $parts = parse_url($url);
