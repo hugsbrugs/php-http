@@ -10,7 +10,6 @@
         }
     ],
     "require": {
-        "layershifter/tld-extract": "^1.2",
         "true/punycode": "~2.0",
         "jeremykendall/php-domain-parser": "^5.7"
     },
