@@ -11,7 +11,7 @@
     ],
     "require": {
         "true/punycode": "~2.0",
-        "jeremykendall/php-domain-parser": "^6.1"
+        "jeremykendall/php-domain-parser": "^5.7.2"
     },
     "autoload":{
     	"psr-4": {"Hug\\": "src/Hug/"}
