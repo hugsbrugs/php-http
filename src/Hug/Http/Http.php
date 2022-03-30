@@ -20,34 +20,39 @@ use Symfony\Component\Cache\Psr16Cache;
  */
 class Http
 {
+    private static $publicSuffixList = null;
+    
     /**
      *
      */
     public static function get_suffix_list()
     {
-        # With Cache System
-        if(defined('PDP_PDO_DSN')){
-            $pdo = new PDO(PDP_PDO_DSN, PDP_PDO_USER, PDP_PDO_PASS, PDP_PDO_OPTIONS);
-            $cache = new Psr16Cache(new PdoAdapter($pdo, 'pdp', 43200));
-            $client = new \GuzzleHttp\Client();
-            $requestFactory = new class implements RequestFactoryInterface {
-                public function createRequest(string $method, $uri): RequestInterface
-                {
-                    return new Request($method, $uri);
-                }
-            };
+        if(is_null(self::$publicSuffixList))
+        {
+            # With Cache System
+            if(defined('PDP_PDO_DSN')){
+                $pdo = new PDO(PDP_PDO_DSN, PDP_PDO_USER, PDP_PDO_PASS, PDP_PDO_OPTIONS);
+                $cache = new Psr16Cache(new PdoAdapter($pdo, 'pdp', 43200));
+                $client = new \GuzzleHttp\Client();
+                $requestFactory = new class implements RequestFactoryInterface {
+                    public function createRequest(string $method, $uri): RequestInterface
+                    {
+                        return new Request($method, $uri);
+                    }
+                };
 
-            $cachePrefix = 'pdp_';
-            $cacheTtl = new DateInterval('P1D');
-            $factory = new PsrStorageFactory($cache, $client, $requestFactory);
-            $pslStorage = $factory->createPublicSuffixListStorage($cachePrefix, $cacheTtl);
-            $publicSuffixList = $pslStorage->get(PsrStorageFactory::PUBLIC_SUFFIX_LIST_URI);
-            return $publicSuffixList;
-        } else { # Without Cache System
-            self::suffix_list_path();
-            $publicSuffixList = Rules::fromPath(PUBLIC_SUFFIX_LIST);
-            return $publicSuffixList;
+                $cachePrefix = 'pdp_';
+                $cacheTtl = new DateInterval('P1D');
+                $factory = new PsrStorageFactory($cache, $client, $requestFactory);
+                $pslStorage = $factory->createPublicSuffixListStorage($cachePrefix, $cacheTtl);
+                self::$publicSuffixList = $pslStorage->get(PsrStorageFactory::PUBLIC_SUFFIX_LIST_URI);
+            } else { # Without Cache System
+                self::suffix_list_path();
+                self::$publicSuffixList = Rules::fromPath(PUBLIC_SUFFIX_LIST);
+            }
         }
+
+        return self::$publicSuffixList;
     }
     
     /**
