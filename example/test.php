@@ -6,6 +6,7 @@ use Hug\Http\Http as Http;
 
 
 $test = Http::grab_image('https://naturo-paca.fr/img/martin_carre.jpg', __DIR__ . '/../data/martin_carre.jpg');
+error_log('test : ' . var_dump($test));
 
 exit;
 

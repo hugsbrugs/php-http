@@ -3,103 +3,64 @@
 namespace Hug\Http;
 
 use Pdp\Rules as Rules;
-
-use Pdp\Manager;
-use Pdp\Cache;
-use Pdp\CurlHttpClient;
-
 use TrueBV\Punycode;
+
+// cache mechanism for jeremykendall/php-domain-parser
+use PDO;
+use DateInterval;
+use GuzzleHttp\Psr7\Request;
+use Pdp\Storage\PsrStorageFactory;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
+use Symfony\Component\Cache\Psr16Cache;
 
 /**
  *
  */
 class Http
 {
-
-    /**
-     * Updates data from https://publicsuffix.org/list/public_suffix_list.dat
-     * into local file for cache storage
-     * https://github.com/jeremykendall/php-domain-parser/tree/5.7.2
-     */
-    public static function update_suffix_list()
-    {
-        # Without Cache System
-        /*
-        self::suffix_list_path();
-        if(is_writable(PUBLIC_SUFFIX_LIST))
-        {
-            $url = 'https://publicsuffix.org/list/public_suffix_list.dat';
-            $data = file_get_contents($url);
-            if($data!==false)
-            {
-                if(file_put_contents(PUBLIC_SUFFIX_LIST, $data)===false)
-                {
-                    throw new Exception("Error writing data", 1);
-                }
-            }
-            else
-            {
-                throw new Exception("Error downloading data", 1);
-            }
-        }
-        else
-        {
-            throw new Exception("File not writable", 1);
-        }
-        */
-        # With Cache System
-        self::psl_cache();
-        $manager = new Manager(new Cache(HTTP_PSL_CACHE), new CurlHttpClient());
-        $manager->refreshRules();
-    }
-
     /**
      *
      */
     public static function get_suffix_list()
     {
-        # Without Cache System
-        /*
-        self::suffix_list_path();
-        # php-domain-parser V6
-        # php-domain-parser V5
-        return Rules::createFromPath(PUBLIC_SUFFIX_LIST);
-        */
-
         # With Cache System
-        self::psl_cache();
-        $manager = new Manager(new Cache(HTTP_PSL_CACHE), new CurlHttpClient());
-        // $tldCollection = $manager->getTLDs(Manager::RZD_URL, 86400);
-        // return $tldCollection;
-        $rules = $manager->getRules(Manager::PSL_URL, 86400);
-        return $rules;
+        if(defined('PDP_PDO_DSN')){
+            $pdo = new PDO(PDP_PDO_DSN, PDP_PDO_USER, PDP_PDO_PASS, PDP_PDO_OPTIONS);
+            $cache = new Psr16Cache(new PdoAdapter($pdo, 'pdp', 43200));
+            $client = new \GuzzleHttp\Client();
+            $requestFactory = new class implements RequestFactoryInterface {
+                public function createRequest(string $method, $uri): RequestInterface
+                {
+                    return new Request($method, $uri);
+                }
+            };
 
+            $cachePrefix = 'pdp_';
+            $cacheTtl = new DateInterval('P1D');
+            $factory = new PsrStorageFactory($cache, $client, $requestFactory);
+            $pslStorage = $factory->createPublicSuffixListStorage($cachePrefix, $cacheTtl);
+            $publicSuffixList = $pslStorage->get(PsrStorageFactory::PUBLIC_SUFFIX_LIST_URI);
+            return $publicSuffixList;
+        } else { # Without Cache System
+            self::suffix_list_path();
+            $publicSuffixList = Rules::fromPath(PUBLIC_SUFFIX_LIST);
+            return $publicSuffixList;
+        }
     }
     
     /**
      * Define default PUBLIC_SUFFIX_LIST constant for storing : 
      * https://publicsuffix.org/list/public_suffix_list.dat
      */
-    /*private static function suffix_list_path()
+    private static function suffix_list_path()
     {
         if(!defined('PUBLIC_SUFFIX_LIST') || !is_file(PUBLIC_SUFFIX_LIST))
         {
-            define('PUBLIC_SUFFIX_LIST', __DIR__ . '/../../../cache/public_suffix_list.dat');
-        }
-    }*/
-
-    /**
-     * Define default PUBLIC_SUFFIX_LIST constant for storing : 
-     * https://publicsuffix.org/list/public_suffix_list.dat
-     */
-    private static function psl_cache()
-    {
-        if(!defined('HTTP_PSL_CACHE') || !is_dir(HTTP_PSL_CACHE))
-        {
-            define('HTTP_PSL_CACHE', '/tmp');
+            define('PUBLIC_SUFFIX_LIST', realpath(__DIR__ . '/../../../cache/public_suffix_list.dat'));
         }
     }
-
 
     /**
      * Execute shell nslookup command
@@ -246,7 +207,7 @@ class Http
             // error_log('retcode : ' . $retcode);
             // error_log('raw : ' . $raw);
 
-            if($retcode===200)
+            if($retcode===200 && strlen($raw))
             {
                 # Remove existing file
                 if(file_exists($save_to))
@@ -328,12 +289,20 @@ class Http
         $publicSuffixList = Http::get_suffix_list();
         $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
 
+        # php-domain-parser V6
         $data = [
+            'suffix' => $result->suffix()->toString(),
+            'tld' => $result->registrableDomain()->toString(),
+            'domain' => $result->domain()->toString(),
+            'subdomain' => $result->subDomain()->toString()
+        ];
+        # php-domain-parser V5
+        /*$data = [
             'suffix' => $result->getPublicSuffix() !== null ? $result->getPublicSuffix() : '',
             'tld' => $result->getRegistrableDomain() !== null ? $result->getRegistrableDomain() : '',
             'domain' => $result->getContent() !== null ? $result->getContent() : '',
             'subdomain' => $result->getSubDomain() !== null ? $result->getSubDomain() : '' 
-        ];
+        ];*/
 
         return $data;
     }
@@ -352,9 +321,9 @@ class Http
         $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
 
         # php-domain-parser V6
-        // $extension = $result->suffix()->toString();
+        $extension = $result->suffix()->toString();
         # php-domain-parser V5
-        $extension = $result->getPublicSuffix() !== null ? $result->getPublicSuffix() : '';
+        // $extension = $result->getPublicSuffix() !== null ? $result->getPublicSuffix() : '';
 
         return $extension;
     }
@@ -391,9 +360,9 @@ class Http
         $publicSuffixList = Http::get_suffix_list();
         $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
         # php-domain-parser V6
-        // $tld = $result->registrableDomain()->toString();
+        $tld = $result->registrableDomain()->toString();
         # php-domain-parser V5
-        $tld = $result->getRegistrableDomain() !== null ? $result->getRegistrableDomain() : '';
+        // $tld = $result->getRegistrableDomain() !== null ? $result->getRegistrableDomain() : '';
 
         return $tld;
     }
@@ -412,9 +381,9 @@ class Http
         $publicSuffixList = Http::get_suffix_list();
         $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
         # php-domain-parser V6
-        // $domain = $result->domain()->toString();
+        $domain = $result->domain()->toString();
         # php-domain-parser V5
-        $domain = $result->getContent() !== null ? $result->getContent() : '';
+        // $domain = $result->getContent() !== null ? $result->getContent() : '';
 
         return $domain;
     }
@@ -432,9 +401,9 @@ class Http
         $publicSuffixList = Http::get_suffix_list();
         $result = $publicSuffixList->resolve(parse_url($url, PHP_URL_HOST));
         # php-domain-parser V6
-        // $subdomain = $result->subDomain()->toString();
+        $subdomain = $result->subDomain()->toString();
         # php-domain-parser V5
-        $subdomain = $result->getSubDomain() !== null ? $result->getSubDomain() : '';
+        // $subdomain = $result->getSubDomain() !== null ? $result->getSubDomain() : '';
 
         return $subdomain;
     }
@@ -1169,9 +1138,9 @@ class Http
         }
         
         # php-domain-parser V6
-        // $filename .= $result->domain()->toString();
+        $filename .= $result->domain()->toString();
         # php-domain-parser V5
-        $filename .= $result->getContent();
+        // $filename .= $result->getContent();
         
         if(isset($path['path']) && strlen($path['path'])>0)
         {

@@ -18,6 +18,24 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Hug\Http\Http as Http;
 ```
 
+## Configuration
+
+In order to use cache mechanism, define following constants
+```php
+define('PDP_PDO_DSN', 'mysql:host=localhost;dbname=database');
+define('PDP_PDO_USER', 'username');
+define('PDP_PDO_PASS', 'password');
+define('PDP_PDO_OPTIONS', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+```
+
+Alternatively define path to the local stored [public suffix list](https://publicsuffix.org/list/public_suffix_list.dat)
+```php
+define('PUBLIC_SUFFIX_LIST', realpath(__DIR__ . '/../../../cache/public_suffix_list.dat'));
+```
+This method should not be used in production since it's really slow.
+
+Otherwise the default, not accurate, cache/public_suffix_list.dat file will be used.
+
 ## Usage
 
 Execute shell nslookup command
